@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import json
 from urllib.request import urlopen
 from typing import 	List, Dict, Tuple
 

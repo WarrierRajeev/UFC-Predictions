@@ -10,21 +10,12 @@ past_event_links_file = base_path/'past_event_links.pickle'
 
 if event_and_fight_links_file.exists()!=True:
 	past_event_links = cfd.get_link_of_past_events()
-	pickle_out = open("past_event_links.pickle","wb")
-	pickle.dump(past_event_links, pickle_out)
-	pickle_out.close()
 else:
 	pickle_in = open(event_and_fight_links_file.as_posix(),"rb")
 	past_event_links = pickle.load(pickle_in)
 
 if fight_links_file.exists()!=True:
 	fight_links, event_and_fight_links = cfd.get_fight_links()
-	pickle_out = open("fight_links.pickle","wb")
-	pickle.dump(fight_links, pickle_out)
-	pickle_out.close()
-	pickle_out = open("event_and_fight_links.pickle","wb")
-	pickle.dump(event_and_fight_links, pickle_out)
-	pickle_out.close()
 else:
 	pickle_in = open(fight_links_file.as_posix(),"rb")
 	fight_links = pickle.load(pickle_in)
