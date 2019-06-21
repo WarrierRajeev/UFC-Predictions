@@ -15,7 +15,7 @@ CSV_PATH = BASE_PATH/'fighter_details.csv'
 
 def get_fighter_group_urls() -> List[str]:
 	alphas = [chr(i) for i in range(ord('a'),ord('a')+26)]
-	fighter_group_urls = [f"http://ufcstats.com/statistics/fighters?char={alpha}" for alpha in alphas]
+	fighter_group_urls = [f"http://ufcstats.com/statistics/fighters?char={alpha}&page=all" for alpha in alphas]
 	return fighter_group_urls
 
 def get_fighter_name_and_link(fighter_group_urls: List[str]) -> Dict[str, List[str]]:
