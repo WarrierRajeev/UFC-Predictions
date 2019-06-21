@@ -4,7 +4,8 @@ from urllib.request import urlopen
 from typing import 	List, Dict, Tuple
 from pathlib import Path
 import os
-from create_data.print_progress import print_progress
+from createdata.print_progress import print_progress
+from createdata.make_soup import make_soup
 
 HEADER: str = 'R_fighter;B_fighter;R_KD;B_KD;R_SIG_STR.;B_SIG_STR.\
 ;R_SIG_STR_pct;B_SIG_STR_pct;R_TOTAL_STR.;B_TOTAL_STR.;R_TD;B_TD;R_TD_pct\
@@ -13,12 +14,6 @@ HEADER: str = 'R_fighter;B_fighter;R_KD;B_KD;R_SIG_STR.;B_SIG_STR.\
 ;win_by;last_round;last_round_time;Format;Referee;date;location;Fight_type;Winner\n'
 BASE_PATH = Path(os.getcwd())/'data'
 CSV_PATH = BASE_PATH/'total_fight_data.csv'
-
-def make_soup(url: str) -> BeautifulSoup:
-	source_code = requests.get(url, allow_redirects=False)
-	plain_text = source_code.text.encode('ascii', 'replace')
-	
-	return BeautifulSoup(plain_text,'html.parser')
 
 def get_fight_stats(fight_soup: BeautifulSoup) -> str:
 	tables = fight_soup.findAll('tbody')
@@ -116,7 +111,7 @@ def get_total_fight_stats(event_and_fight_links: Dict[str, List[str]]) -> str:
 
 	return total_stats
 
-def save_data_to_csv(event_and_fight_links: Dict[str, List[str]], header: str = HEADER) -> None:
+def create_fight_data_csv(event_and_fight_links: Dict[str, List[str]], header: str = HEADER) -> None:
 	
 	total_stats = get_total_fight_stats(event_and_fight_links)
 	with open(CSV_PATH.as_posix(), 'wb') as file:

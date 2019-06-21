@@ -4,17 +4,13 @@ import pickle
 import os
 from pathlib import Path
 from urllib.request import urlopen
-from typing import 	List, Dict, Tuple
+from typing import List, Dict, Tuple
+from createdata.make_soup import make_soup
 
 ALL_EVENTS_URL = 'http://ufcstats.com/statistics/events/completed?page=all'
 BASE_PATH = Path(os.getcwd())/'data'
 EVENT_AND_FIGHT_LINKS_PATH = BASE_PATH/'event_and_fight_links.pickle'
 PAST_EVENT_LINKS_PATH = BASE_PATH/'past_event_links.pickle'
-
-def make_soup(url: str) -> BeautifulSoup:
-	source_code = requests.get(url, allow_redirects=False)
-	plain_text = source_code.text.encode('ascii', 'replace')
-	return BeautifulSoup(plain_text,'html.parser')
 
 def get_link_of_past_events(all_events_url: str=ALL_EVENTS_URL) -> List[str]:
 	links = []
