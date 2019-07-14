@@ -2,14 +2,6 @@
 
 Scrape entire fight data from UFCstats.com and use it to make a predictive model.
 
-### Completed:
-1. Per fight data scraping and saving in csv format
-- Preprocess the data
-- Get a Baseline
-
-### TODO Next:
-Test other models and hyperparameters to increase accuracy
-
 #### Acknowledgements
 
 - Inspiration: https://github.com/Hitkul/UFC_Fight_Prediction 
