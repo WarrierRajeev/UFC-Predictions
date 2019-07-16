@@ -3,7 +3,7 @@
 - Scraped event and fight stats, data from 1993 to present date using Beautiful Soup.
 - Cleaned, preprocessed and feature engineered the data to each row being a historical representation of both fighters and their individual fights/fight stats.
 - Dataset uploaded and now available on Kaggle at: https://www.kaggle.com/rajeevw/ufcdata
-- Created and tested predictive models using `RandomForestClassifier` and `XGBoostClassifier`
+- Oversampled minority class, created and tested predictive models using `RandomForestClassifier` and `XGBoostClassifier`
 
 ### Results
 
@@ -12,10 +12,11 @@
 
 ![Confusion Matrix](https://github.com/WarrierRajeev/UFC-Predictions/blob/master/conf-matrix.png)
 
-Blue: Fighter in the blue corner
-Red: Fighter in the red corner
+- **Blue**: Fighter in the blue corner
+- **Red**: Fighter in the red corner
 
-Generally the underdog is in the blue corner and favourite fighter is in the red corner.
+- Generally the underdog is in the blue corner and favourite fighter is in the red corner.
+- The model is therefore (understandably) having a hard time figuring out when the underdog wins. This is because the sport is very volatile and there can be anything from an injury, psychological loss/trauma to just pure luck that determine the winner.
 
 ### Details about the data
 
