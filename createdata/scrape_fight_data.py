@@ -13,7 +13,6 @@ HEADER: str = 'R_fighter;B_fighter;R_KD;B_KD;R_SIG_STR.;B_SIG_STR.\
 ;B_BODY;R_LEG;B_LEG;R_DISTANCE;B_DISTANCE;R_CLINCH;B_CLINCH;R_GROUND;B_GROUND\
 ;win_by;last_round;last_round_time;Format;Referee;date;location;Fight_type;Winner\n'
 BASE_PATH = Path(os.getcwd())/'data'
-CSV_PATH = BASE_PATH/'total_fight_data.csv'
 
 def get_fight_stats(fight_soup: BeautifulSoup) -> str:
 	tables = fight_soup.findAll('tbody')
@@ -111,8 +110,11 @@ def get_total_fight_stats(event_and_fight_links: Dict[str, List[str]]) -> str:
 
 	return total_stats
 
-def create_fight_data_csv(event_and_fight_links: Dict[str, List[str]], header: str = HEADER) -> None:
+def create_fight_data_csv(event_and_fight_links: Dict[str, List[str]], 
+						filename: str = 'total_fight_data.csv', header: str = HEADER) -> None:
 	
+	CSV_PATH = BASE_PATH/filename
+	assert CSV_PATH.exists()!=True, 'filename exists'
 	total_stats = get_total_fight_stats(event_and_fight_links)
 	with open(CSV_PATH.as_posix(), 'wb') as file:
 		file.write(bytes(header, encoding='ascii', errors='ignore'))

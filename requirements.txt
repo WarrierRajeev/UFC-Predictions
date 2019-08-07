@@ -1,0 +1,14 @@
+requests
+dash
+dash-renderer
+dash-core-components
+dash-html-components
+dash-table-experimentS
+plotly
+gunicorn
+pandas
+numpy
+jupyter
+sklearn
+xgboost
+search-google

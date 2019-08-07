@@ -1,9 +1,24 @@
 ## UFC predictions
 
+
+### Usage
+
+![UFC app](https://github.com/WarrierRajeev/UFC-Predictions/blob/master/ufc-app.png)
+
+- GO to https://ufc-predictions.herokuapp.com/
+- Select weight-class of the bout
+- Select Number of 5 minute rounds the fight is scheduled for
+- Select if the fight is a title fight or not
+- Select the fighter names
+- Click predict
+
+### Details
+
 - Scraped event and fight stats, data from 1993 to present date using Beautiful Soup.
 - Cleaned, preprocessed and feature engineered the data to each row being a historical representation of both fighters and their individual fights/fight stats.
 - Dataset uploaded and now available on Kaggle at: https://www.kaggle.com/rajeevw/ufcdata
 - Oversampled minority class, created and tested predictive models using `RandomForestClassifier` and `XGBoostClassifier`
+- Created a web app using dash and deployed it with docker on heroku.
 
 ### Results
 
@@ -86,8 +101,7 @@ Here are some column definitions:
 
 ### Future Possibilities:
 
-- Make a pipeline where any new event scraped can be converted to the desired format and the dataset can be updated.
-- Make a pipeline where a future event details can be scraped and fight results can be predicted.
+- Try weighted moving average instead of simple mean to give more importance to stats of recent fights per fighter
 
 #### Acknowledgements
 
@@ -96,3 +110,6 @@ Provided ideas on how to store per fight data. Unfortunately, the entire UFC web
 
 - Print Progress Bar: https://gist.github.com/aubricus/f91fb55dc6ba5557fbab06119420dd6a
 To display progress of how much download is complete in the terminal
+
+- Web app: https://github.com/jasonchanhku/
+Ideas on how to use dash and google search api to show fighter images

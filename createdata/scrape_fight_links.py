@@ -50,10 +50,16 @@ def get_all_links() -> Dict[str, List[str]]:
 			pickle_in = open(PAST_EVENT_LINKS_PATH.as_posix(),"rb")
 			past_event_links = pickle.load(pickle_in)
 			pickle_in.close()
-		event_and_fight_links = get_fight_links(past_event_links)
+		event_and_fight_links = get_event_and_fight_links(past_event_links)
 	else:
 		pickle_in = open(EVENT_AND_FIGHT_LINKS_PATH.as_posix(),"rb")
 		event_and_fight_links = pickle.load(pickle_in)
 		pickle_in.close()
 
 	return event_and_fight_links
+
+def get_this_event_fight_links(event_links: List[str]) -> Dict[str, List[str]]:
+	if isinstance(event_links, list):
+		return get_event_and_fight_links(event_links)
+	else:
+		return get_event_and_fight_links(list[event_links])
