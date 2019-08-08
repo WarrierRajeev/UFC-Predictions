@@ -5,7 +5,7 @@
 
 ![UFC app](https://github.com/WarrierRajeev/UFC-Predictions/blob/master/ufc-app.png)
 
-- GO to https://ufc-predictions.herokuapp.com/
+- Go to https://ufc-predictions.herokuapp.com/
 - Select weight-class of the bout
 - Select Number of 5 minute rounds the fight is scheduled for
 - Select if the fight is a title fight or not
@@ -22,13 +22,13 @@
 
 ### Results
 
-- Accuracy (Test): 0.7001
-- AUC Score (Test): 0.7220
+- Accuracy (valid): 0.7218
+- AUC Score (valid): 0.7763
 
 ![Confusion Matrix](https://github.com/WarrierRajeev/UFC-Predictions/blob/master/conf-matrix.png)
 
-- **Blue**: Fighter in the blue corner
-- **Red**: Fighter in the red corner
+- `0` corresponds to **Blue**: Fighter in the blue corner
+- `1` corresponds to **Red**: Fighter in the red corner
 
 - Generally the underdog is in the blue corner and favourite fighter is in the red corner.
 - The model is therefore (understandably) having a hard time figuring out when the underdog wins. This is because the sport is very volatile and there can be anything from an injury, psychological loss/trauma to just pure luck that determine the winner.
@@ -93,9 +93,8 @@ Here are some column definitions:
 - `win_by_Submission` is the number of wins by submission in the fighter's ufc career
 - `win_by_TKO_Doctor_Stoppage` is the number of wins by doctor stoppage in the fighter's ufc career
 
-### How to use?
+### How to use from Scratch?
 
-#### From Scratch
 - Clear out the data folder and simply run `scrape_all_data.py` (Note: This will scrape everything from the beginning and hence will take a long time.)
 - Run `EDA_and_preprocessing-1.ipynb` and after that `EDA_and_preprocessing-2b.ipynb` (`EDA_and_preprocessing-2a.ipynb` is an alternative where the rows with missing stat values are removed and not treated.)
 
