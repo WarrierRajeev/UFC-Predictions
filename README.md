@@ -56,7 +56,7 @@ Here are some column definitions:
 - `TD_pct` is takedown percentages
 - `SUB_ATT` is no. of submission attempts
 - `PASS` is no. times the guard was passed?
-- `REV` ???
+- `REV` are the number of reversals
 - `HEAD` is no. of significant strinks to the head 'landed of attempted'
 - `BODY` is no. of significant strikes to the body 'landed of attempted'
 - `CLINCH` is no. of significant strikes in the clinch 'landed of attempted'
