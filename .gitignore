@@ -1,12 +1,10 @@
 #IDE metadata
 .idea/
 #ipynb_checkpoints
-nbs/.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
 *.pyc
 *.pyo
-*.telepresence.log
 build/
 dist/
 services/
-tests/profile_get_named_entities.py
-tests/test_text_processor.py
+
