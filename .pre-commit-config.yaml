@@ -1,0 +1,19 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    -   id: check-yaml
+    -   id: check-json
+    -   id: check-added-large-files
+        args: ['--maxkb=1000']
+    -   id: pretty-format-json
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+-   repo: https://github.com/pre-commit/mirrors-isort/
+    rev: v4.3.21
+    hooks:
+    -   id: isort
+-   repo: https://github.com/psf/black
+    rev: 19.3b0
+    hooks:
+    -   id: black
