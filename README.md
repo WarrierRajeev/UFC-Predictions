@@ -95,7 +95,7 @@ Here are some column definitions:
 
 ### How to use from Scratch?
 
-- Clear out the data folder and simply run `scrape_all_data.py` (Note: This will scrape everything from the beginning and hence will take a long time.)
+- Simply run `create_ufc_data.py` (Note: This will scrape everything from the beginning if you haven't used this before. Otherwise this will update the data files)
 - Run `EDA_and_preprocessing-1.ipynb` and after that `EDA_and_preprocessing-2b.ipynb` (`EDA_and_preprocessing-2a.ipynb` is an alternative where the rows with missing stat values are removed and not treated.)
 
 ### Future Possibilities:
@@ -104,7 +104,7 @@ Here are some column definitions:
 
 #### Acknowledgements
 
-- Inspiration: https://github.com/Hitkul/UFC_Fight_Prediction 
+- Inspiration: https://github.com/Hitkul/UFC_Fight_Prediction
 Provided ideas on how to store per fight data. Unfortunately, the entire UFC website and fightmetric website changed so couldn't reuse any of the code.
 
 - Print Progress Bar: https://gist.github.com/aubricus/f91fb55dc6ba5557fbab06119420dd6a
