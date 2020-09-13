@@ -7,4 +7,3 @@ notebooks/.ipynb_checkpoints/
 build/
 dist/
 services/
-data/
