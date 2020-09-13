@@ -1,65 +1,80 @@
-import requests
-from bs4 import BeautifulSoup
 import pickle
-import os
-from pathlib import Path
-from urllib.request import urlopen
-from typing import List, Dict, Tuple
+from typing import Dict, List, Tuple
+
 from createdata.make_soup import make_soup
 
-ALL_EVENTS_URL = 'http://ufcstats.com/statistics/events/completed?page=all'
-BASE_PATH = Path(os.getcwd())/'data'
-EVENT_AND_FIGHT_LINKS_PATH = BASE_PATH/'event_and_fight_links.pickle'
-PAST_EVENT_LINKS_PATH = BASE_PATH/'past_event_links.pickle'
+from createdata.data_files_path import (  # isort:skip
+    EVENT_AND_FIGHT_LINKS_PICKLE_PATH,
+    PAST_EVENT_LINKS_PICKLE_PATH,
+)
 
-def get_link_of_past_events(all_events_url: str=ALL_EVENTS_URL) -> List[str]:
-	links = []
-	url = all_events_url
-	soup = make_soup(all_events_url)
-	for link in soup.findAll('td',{'class': 'b-statistics__table-col'}):
-		for href in link.findAll('a'):
-			foo = href.get('href')
-			links.append(foo)
-	pickle_out = open(PAST_EVENT_LINKS_PATH.as_posix(),"wb")
-	pickle.dump(links, pickle_out)
-	pickle_out.close()
 
-	return links
+class UFCLinks:
+    def __init__(
+        self, all_events_url="http://ufcstats.com/statistics/events/completed?page=all"
+    ):
+        self.all_events_url = all_events_url
+        self.new_event_links, self.all_event_links = self._get_updated_event_links()
 
-def get_event_and_fight_links(event_links: List[str]) -> Dict[str, List[str]]:
-	event_and_fight_links = {}
-	for link in event_links:
-		event_fights = []
-		soup = make_soup(link)
-		for row in soup.findAll('tr', {'class': 'b-fight-details__table-row b-fight-details__table-row__hover js-fight-details-click'}):
-			href = row.get('data-link')
-			event_fights.append(href)
-		event_and_fight_links[link] = event_fights
+    def _get_updated_event_links(self) -> Tuple[List[str], List[str]]:
+        all_event_links = []
+        soup = make_soup(self.all_events_url)
 
-	pickle_out = open(EVENT_AND_FIGHT_LINKS_PATH.as_posix(),"wb")
-	pickle.dump(event_and_fight_links, pickle_out)
-	pickle_out.close()
+        for link in soup.findAll("td", {"class": "b-statistics__table-col"}):
+            for href in link.findAll("a"):
+                foo = href.get("href")
+                all_event_links.append(foo)
 
-	return event_and_fight_links
+        if not PAST_EVENT_LINKS_PICKLE_PATH.exists():
+            # if no past event links are present, then there are no new event links
+            new_event_links = []
+        else:
+            # get past event links
+            pickle_in = open(PAST_EVENT_LINKS_PICKLE_PATH.as_posix(), "rb")
+            past_event_links = pickle.load(pickle_in)
+            pickle_in.close()
 
-def get_all_links() -> Dict[str, List[str]]:
-	if EVENT_AND_FIGHT_LINKS_PATH.exists()!=True:
-		if PAST_EVENT_LINKS_PATH.exists()!=True:
-			past_event_links = get_link_of_past_events()
-		else:
-			pickle_in = open(PAST_EVENT_LINKS_PATH.as_posix(),"rb")
-			past_event_links = pickle.load(pickle_in)
-			pickle_in.close()
-		event_and_fight_links = get_event_and_fight_links(past_event_links)
-	else:
-		pickle_in = open(EVENT_AND_FIGHT_LINKS_PATH.as_posix(),"rb")
-		event_and_fight_links = pickle.load(pickle_in)
-		pickle_in.close()
+            # Find links of the newer events
+            new_event_links = list(set(all_event_links) - set(past_event_links))
 
-	return event_and_fight_links
+            # dump all_event_links as PAST_EVENT_LINKS
+            pickle_out1 = open(PAST_EVENT_LINKS_PICKLE_PATH.as_posix(), "wb")
+            pickle.dump(all_event_links, pickle_out1)
+            pickle_out1.close()
 
-def get_this_event_fight_links(event_links: List[str]) -> Dict[str, List[str]]:
-	if isinstance(event_links, list):
-		return get_event_and_fight_links(event_links)
-	else:
-		return get_event_and_fight_links(list[event_links])
+        return new_event_links, all_event_links
+
+    def get_fight_links(self, event_links: List[str]) -> Dict[str, List[str]]:
+        event_and_fight_links = {}
+        for link in event_links:
+            event_fights = []
+            soup = make_soup(link)
+            for row in soup.findAll(
+                "tr",
+                {
+                    "class": "b-fight-details__table-row b-fight-details__table-row__hover js-fight-details-click"
+                },
+            ):
+                href = row.get("data-link")
+                event_fights.append(href)
+            event_and_fight_links[link] = event_fights
+
+        return event_and_fight_links
+
+    def get_event_and_fight_links(self) -> (Dict, Dict):
+        new_events_and_fight_links = {}
+        if EVENT_AND_FIGHT_LINKS_PICKLE_PATH.exists():
+            if not self.new_event_links:
+                pickle_in = open(EVENT_AND_FIGHT_LINKS_PICKLE_PATH.as_posix(), "rb")
+                all_events_and_fight_links = pickle.load(pickle_in)
+                pickle_in.close()
+                return new_events_and_fight_links, all_events_and_fight_links
+            else:
+                new_events_and_fight_links = self.get_fight_links(self.new_event_links)
+
+        all_events_and_fight_links = self.get_fight_links(self.all_event_links)
+        pickle_out = open(EVENT_AND_FIGHT_LINKS_PICKLE_PATH.as_posix(), "wb")
+        pickle.dump(all_events_and_fight_links, pickle_out)
+        pickle_out.close()
+
+        return new_events_and_fight_links, all_events_and_fight_links
