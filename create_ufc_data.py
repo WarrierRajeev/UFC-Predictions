@@ -16,11 +16,9 @@ new_events_and_fight_links, all_events_and_fight_links = (
 print("Scraped and saved event and fight links!")
 
 if not new_events_and_fight_links:
-    create_fight_data_csv(new_events_and_fight_links, filename=TOTAL_EVENT_AND_FIGHTS)
+    create_fight_data_csv(all_events_and_fight_links, filename=TOTAL_EVENT_AND_FIGHTS)
 else:
     create_fight_data_csv(new_events_and_fight_links, filename=NEW_EVENT_AND_FIGHTS)
-
-    create_fighter_data_csv()
 
     new_event_and_fights_data = pd.read_csv(NEW_EVENT_AND_FIGHTS)
     old_event_and_fights_data = pd.read_csv(TOTAL_EVENT_AND_FIGHTS)
