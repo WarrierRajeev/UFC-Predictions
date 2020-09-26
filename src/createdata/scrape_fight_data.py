@@ -2,9 +2,9 @@ from typing import Dict, List
 
 from bs4 import BeautifulSoup
 
-from createdata.data_files_path import BASE_PATH
-from createdata.make_soup import make_soup
-from createdata.print_progress import print_progress
+from src.createdata.data_files_path import BASE_PATH
+from src.createdata.make_soup import make_soup
+from src.createdata.print_progress import print_progress
 
 
 HEADER: str = "R_fighter;B_fighter;R_KD;B_KD;R_SIG_STR.;B_SIG_STR.\

@@ -1,11 +1,11 @@
 import pandas as pd
 
-from createdata.format_data import format_data
-from createdata.scrape_fight_data import create_fight_data_csv
-from createdata.scrape_fight_links import UFCLinks
-from createdata.scrape_fighter_details import create_fighter_data_csv
+from src.createdata import create_fighter_data_csv
+from src.createdata.format_data import format_data
+from src.createdata.scrape_fight_data import create_fight_data_csv
+from src.createdata.scrape_fight_links import UFCLinks
 
-from createdata.data_files_path import (  # isort:skip
+from src.createdata.data_files_path import (  # isort:skip
     NEW_EVENT_AND_FIGHTS,
     TOTAL_EVENT_AND_FIGHTS,
 )

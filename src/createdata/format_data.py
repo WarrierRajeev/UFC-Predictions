@@ -4,7 +4,7 @@ import re
 import numpy as np
 import pandas as pd
 
-from createdata.data_files_path import (  # isort:skip
+from src.createdata.data_files_path import (  # isort:skip
     FIGHTER_DETAILS,
     PREPROCESSED_DATA,
     TOTAL_EVENT_AND_FIGHTS,

@@ -1,9 +1,9 @@
 import pickle
 from typing import Dict, List, Tuple
 
-from createdata.make_soup import make_soup
+from src.createdata.make_soup import make_soup
 
-from createdata.data_files_path import (  # isort:skip
+from src.createdata.data_files_path import (  # isort:skip
     EVENT_AND_FIGHT_LINKS_PICKLE_PATH,
     PAST_EVENT_LINKS_PICKLE_PATH,
 )

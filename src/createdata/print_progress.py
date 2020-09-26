@@ -1,7 +1,14 @@
 import sys
 
-def print_progress(iteration: int, total: int, prefix: str='', suffix: str='', 
-                    decimals: int=1, bar_length: int =50) -> None:
+
+def print_progress(
+    iteration: int,
+    total: int,
+    prefix: str = "",
+    suffix: str = "",
+    decimals: int = 1,
+    bar_length: int = 50,
+) -> None:
     """
     Call in a loop to create terminal progress bar
     @params:
@@ -12,12 +19,12 @@ def print_progress(iteration: int, total: int, prefix: str='', suffix: str='',
         decimals    - Optional  : positive number of decimals in percent complete (Int)
         bar_length  - Optional  : character length of bar (Int)
     """
-    percents = f'{100 * (iteration / float(total)):.2f}'
+    percents = f"{100 * (iteration / float(total)):.2f}"
     filled_length = int(round(bar_length * iteration / float(total)))
     bar = f'{"█" * filled_length}{"-" * (bar_length - filled_length)}'
 
-    sys.stdout.write(f'\r{prefix} |{bar}| {percents}% {suffix}')
+    sys.stdout.write(f"\r{prefix} |{bar}| {percents}% {suffix}")
 
     if iteration == total:
-        sys.stdout.write('\n')
+        sys.stdout.write("\n")
     sys.stdout.flush()
