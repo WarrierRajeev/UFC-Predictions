@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.createdata.format_data import format_data
+from src.createdata.preprocess import Preprocessor
 from src.createdata.scrape_fight_data import create_fight_data_csv
 from src.createdata.scrape_fight_links import UFCLinks
 from src.createdata.scrape_fighter_details import create_fighter_data_csv
@@ -29,5 +29,8 @@ else:
     )
     latest_total_fight_data.to_csv(TOTAL_EVENT_AND_FIGHTS, index=None)
 
-create_fighter_data_csv()
-format_data()
+print("Creating fighter data \n")
+create_fighter_data_csv()  # Scrapes raw ufc data from website
+
+print("Starting Preprocessing \n")
+Preprocessor()  # Preprocesses the raw data and saves the csv files in data folder
