@@ -95,8 +95,10 @@ Here are some column definitions:
 
 ### How to use from Scratch?
 
-- Simply run `create_ufc_data.py` (Note: This will scrape everything from the beginning if you haven't used this before. Otherwise this will update the data files)
-- Run `EDA_and_preprocessing-1.ipynb` and after that `EDA_and_preprocessing-2b.ipynb` (`EDA_and_preprocessing-2a.ipynb` is an alternative where the rows with missing stat values are removed and not treated.)
+- Simply run `src/create_ufc_data.py`
+
+(Note: This will scrape everything from the beginning if you haven't used this before.
+Otherwise this will update the data files. Then, it will preprocess the raw scraped files to create usable data files)
 
 ### Future Possibilities:
 
