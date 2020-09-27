@@ -15,7 +15,6 @@ from src.createdata.data_files_path import (  # isort:skip
 
 class Preprocessor:
     def __init__(self):
-
         self.FIGHTER_DETAILS_PATH = FIGHTER_DETAILS
         self.TOTAL_EVENT_AND_FIGHTS_PATH = TOTAL_EVENT_AND_FIGHTS
         self.PREPROCESSED_DATA_PATH = PREPROCESSED_DATA
@@ -48,7 +47,6 @@ class Preprocessor:
         print("Saved File")
 
     def _read_files(self):
-
         try:
             fights_df = pd.read_csv(self.TOTAL_EVENT_AND_FIGHTS_PATH, sep=";")
 
@@ -66,7 +64,6 @@ class Preprocessor:
         return fights_df, fighter_details_df
 
     def _rename_columns(self):
-
         columns = [
             "R_SIG_STR.",
             "B_SIG_STR.",
@@ -155,7 +152,6 @@ class Preprocessor:
     def _get_total_time_fought(self):
         # '1 Rnd + 2OT (15-3-3)' and '1 Rnd + 2OT (24-3-3)' is not included because it has 3 uneven timed rounds.
         # We'll have to deal with it separately
-
         time_in_first_round = {
             "3 Rnd (5-5-5)": 5 * 60,
             "5 Rnd (5-5-5-5-5)": 5 * 60,
@@ -181,7 +177,7 @@ class Preprocessor:
             "1 Rnd + 2OT (24-3-3)": [24 * 60, 3 * 60],
         }
 
-        def get_total_time(row,):
+        def get_total_time(row):
             if row["Format"] in time_in_first_round.keys():
                 return (row["last_round"] - 1) * time_in_first_round[
                     row["Format"]
@@ -289,13 +285,11 @@ class Preprocessor:
         self.store = self.store.join(frame, how="outer")
 
     def _create_fighter_age(self):
-
         self.store["R_DOB"] = pd.to_datetime(self.store["R_DOB"])
         self.store["B_DOB"] = pd.to_datetime(self.store["B_DOB"])
         self.store["date"] = pd.to_datetime(self.store["date"])
 
         def get_age(row):
-
             B_age = (row["date"] - row["B_DOB"]).days
             R_age = (row["date"] - row["R_DOB"]).days
 
@@ -316,7 +310,6 @@ class Preprocessor:
         self.store.to_csv(filepath, index=False)
 
     def _fill_nas(self):
-
         self.store["R_Reach_cms"].fillna(self.store["R_Height_cms"], inplace=True)
         self.store["B_Reach_cms"].fillna(self.store["B_Height_cms"], inplace=True)
         self.store.fillna(self.store.median(), inplace=True)
@@ -325,7 +318,6 @@ class Preprocessor:
         self.store["B_Stance"].fillna("Orthodox", inplace=True)
 
     def _drop_non_essential_cols(self):
-
         self.store.drop(self.store.index[self.store["Winner"] == "Draw"], inplace=True)
         self.store = pd.concat(
             [
