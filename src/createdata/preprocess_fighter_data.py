@@ -1,26 +1,22 @@
-import math
-import os
 import re
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
 
-class ProcessFighterDetail:
+class FighterDetailProcessor:
     def __init__(self, fights, fighter_details):
-
         self.fights = fights
         self.fighter_details = fighter_details
-        self.OneHotEncodeWin()
-        self.CalculateFighterData()
-        self.ConvertHeightReachTo_cms()
-        self.ConvertWeightToPounds()
-        self.MergeFrames()
-        self.RenameColumns()
+        self._one_hot_encode_win()
+        self.temp_red_frame, self.temp_blue_frame = self._calculate_fighter_data()
+        self._convert_height_reach_to_cms()
+        self._convert_weight_to_pounds()
+        self.frame = self._merge_frames()
+        self._rename_columns()
 
-    def OneHotEncodeWin(self):
+    def _one_hot_encode_win(self):
 
         self.fights = pd.concat(
             [self.fights, pd.get_dummies(self.fights["win_by"], prefix="win_by")],
@@ -28,19 +24,19 @@ class ProcessFighterDetail:
         )
         self.fights.drop(["win_by"], axis=1, inplace=True)
 
-    def GetFighters(self):
+    def _get_fighters(self):
 
         red_fighters = self.fights["R_fighter"].value_counts().index
         blue_fighters = self.fights["B_fighter"].value_counts().index
 
         return list(set(red_fighters) | set(blue_fighters))
 
-    def CalculateFighterData(self):
+    def _calculate_fighter_data(self):
 
-        self.temp_blue_frame = pd.DataFrame()
-        self.temp_red_frame = pd.DataFrame()
+        temp_blue_frame = pd.DataFrame()
+        temp_red_frame = pd.DataFrame()
 
-        fighters = self.GetFighters()
+        fighters = self._get_fighters()
         self.red = self.fights.groupby("R_fighter")
         self.blue = self.fights.groupby("B_fighter")
 
@@ -116,8 +112,8 @@ class ProcessFighterDetail:
 
         print("Creating Fighter Level Features")
         for fighter_name in tqdm(fighters):
-            fighter_red = self.get_fighter_red(fighter_name)
-            fighter_blue = self.get_fighter_blue(fighter_name)
+            fighter_red = self._get_fighter_red(fighter_name)
+            fighter_blue = self._get_fighter_blue(fighter_name)
             fighter_index = None
 
             if fighter_red is None:
@@ -142,7 +138,7 @@ class ProcessFighterDetail:
                     fighter_slice["title_bout"] == True
                 ]["title_bout"].count()
                 s["hero_fighter"] = fighter_name
-                results = self.get_result_stats(list(fighter_slice["Winner"]))
+                results = self._get_result_stats(list(fighter_slice["Winner"]))
 
                 for result_stat, result in zip(result_stats, results):
                     s[result_stat] = result
@@ -157,13 +153,15 @@ class ProcessFighterDetail:
 
                 if fighter_index is None:
                     if index in fighter_blue.index:
-                        self.temp_blue_frame = self.temp_blue_frame.append(s)
+                        temp_blue_frame = temp_blue_frame.append(s)
                     elif index in fighter_red.index:
-                        self.temp_red_frame = self.temp_red_frame.append(s)
+                        temp_red_frame = temp_red_frame.append(s)
                 elif fighter_index == "blue":
-                    self.temp_blue_frame = self.temp_blue_frame.append(s)
+                    temp_blue_frame = temp_blue_frame.append(s)
                 elif fighter_index == "red":
-                    self.temp_red_frame = self.temp_red_frame.append(s)
+                    temp_red_frame = temp_red_frame.append(s)
+
+        return temp_red_frame, temp_blue_frame
 
     @staticmethod
     def lreplace(pattern, sub, string):
@@ -172,7 +170,7 @@ class ProcessFighterDetail:
         """
         return re.sub("^%s" % pattern, sub, string)
 
-    def get_fighter_red(self, fighter_name):
+    def _get_fighter_red(self, fighter_name):
 
         try:
             fighter_red = self.red.get_group(fighter_name)
@@ -191,7 +189,7 @@ class ProcessFighterDetail:
         fighter_red = fighter_red.rename(rename_columns, axis="columns")
         return fighter_red
 
-    def get_fighter_blue(self, fighter_name):
+    def _get_fighter_blue(self, fighter_name):
 
         try:
             fighter_blue = self.blue.get_group(fighter_name)
@@ -211,7 +209,7 @@ class ProcessFighterDetail:
         return fighter_blue
 
     @staticmethod
-    def get_result_stats(result_list):
+    def _get_result_stats(result_list):
         result_list.reverse()  # To get it in ascending order
         current_win_streak = 0
         current_lose_streak = 0
@@ -247,66 +245,64 @@ class ProcessFighterDetail:
             draw,
         )
 
-    @staticmethod
-    def convert_to_cms(X):
+    def _convert_height_reach_to_cms(self):
+        def convert_to_cms(X):
 
-        if X is np.NaN:
-            return X
+            if X is np.NaN:
+                return X
 
-        elif len(X.split("'")) == 2:
-            feet = float(X.split("'")[0])
-            inches = int(X.split("'")[1].replace(" ", "").replace('"', ""))
-            return (feet * 30.48) + (inches * 2.54)
+            elif len(X.split("'")) == 2:
+                feet = float(X.split("'")[0])
+                inches = int(X.split("'")[1].replace(" ", "").replace('"', ""))
+                return (feet * 30.48) + (inches * 2.54)
 
-        else:
-            return float(X.replace('"', "")) * 2.54
-
-    def ConvertHeightReachTo_cms(self):
+            else:
+                return float(X.replace('"', "")) * 2.54
 
         self.fighter_details["Height_cms"] = self.fighter_details["Height"].apply(
-            self.convert_to_cms
+            convert_to_cms
         )
         self.fighter_details["Reach_cms"] = self.fighter_details["Reach"].apply(
-            self.convert_to_cms
+            convert_to_cms
         )
 
-    def ConvertWeightToPounds(self):
+    def _convert_weight_to_pounds(self):
         self.fighter_details["Weight_lbs"] = self.fighter_details["Weight"].apply(
             lambda X: float(X.replace(" lbs.", "")) if X is not np.NaN else X
         )
         self.fighter_details.drop(["Height", "Weight", "Reach"], axis=1, inplace=True)
 
-    def MergeFrames(self):
+    def _merge_frames(self):
 
         self.fighter_details.reset_index(inplace=True)
         self.temp_red_frame.reset_index(inplace=True)
         self.temp_blue_frame.reset_index(inplace=True)
 
-        temp_blue_frame = self.temp_blue_frame.merge(
+        self.temp_blue_frame = self.temp_blue_frame.merge(
             self.fighter_details,
             left_on="hero_fighter",
             right_on="fighter_name",
             how="left",
         )
-        temp_blue_frame.set_index("index", inplace=True)
+        self.temp_blue_frame.set_index("index", inplace=True)
 
-        temp_red_frame = self.temp_red_frame.merge(
+        self.temp_red_frame = self.temp_red_frame.merge(
             self.fighter_details,
             left_on="hero_fighter",
             right_on="fighter_name",
             how="left",
         )
-        temp_red_frame.set_index("index", inplace=True)
+        self.temp_red_frame.set_index("index", inplace=True)
 
-        temp_blue_frame.drop("fighter_name", axis=1, inplace=True)
-        temp_red_frame.drop("fighter_name", axis=1, inplace=True)
+        self.temp_blue_frame.drop("fighter_name", axis=1, inplace=True)
+        self.temp_red_frame.drop("fighter_name", axis=1, inplace=True)
 
-        blue_frame = temp_blue_frame.add_prefix("B_")
-        red_frame = temp_red_frame.add_prefix("R_")
+        blue_frame = self.temp_blue_frame.add_prefix("B_")
+        red_frame = self.temp_red_frame.add_prefix("R_")
 
-        self.frame = blue_frame.join(red_frame, how="outer")
+        return blue_frame.join(red_frame, how="outer")
 
-    def RenameColumns(self):
+    def _rename_columns(self):
 
         rename_cols = {}
 

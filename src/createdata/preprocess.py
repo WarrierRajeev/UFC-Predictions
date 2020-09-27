@@ -3,7 +3,7 @@ import math
 import numpy as np
 import pandas as pd
 
-from src.createdata.preprocess_fighter_data import ProcessFighterDetail
+from src.createdata.preprocess_fighter_data import FighterDetailProcessor
 
 from src.createdata.data_files_path import (  # isort:skip
     FIGHTER_DETAILS,
@@ -281,7 +281,7 @@ class Preprocessor:
         )
 
     def _create_fighter_attributes(self):
-        frame = ProcessFighterDetail(self.fights, self.fighter_details).frame
+        frame = FighterDetailProcessor(self.fights, self.fighter_details).frame
         self.store = self.store.join(frame, how="outer")
 
     def _create_fighter_age(self):
