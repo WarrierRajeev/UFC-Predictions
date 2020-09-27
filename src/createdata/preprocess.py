@@ -143,6 +143,27 @@ class Preprocessor:
 
         self.fights["weight_class"] = self.fights["Fight_type"].apply(make_weight_class)
 
+        renamed_weight_classes = {
+            "Flyweight": "Flyweight",
+            "Bantamweight": "Bantamweight",
+            "Featherweight": "Featherweight",
+            "Lightweight": "Lightweight",
+            "Welterweight": "Welterweight",
+            "Middleweight": "Middleweight",
+            "Light Heavyweight": "LightHeavyweight",
+            "Heavyweight": "Heavyweight",
+            "Women's Strawweight": "WomenStrawweight",
+            "Women's Flyweight": "WomenFlyweight",
+            "Women's Bantamweight": "WomenBantamweight",
+            "Women's Featherweight": "WomenFeatherweight",
+            "Catch Weight": "CatchWeight",
+            "Open Weight": "OpenWeight",
+        }
+
+        self.fights["weight_class"] = self.fights["weight_class"].apply(
+            lambda weight: renamed_weight_classes[weight]
+        )
+
     def _convert_to_seconds(self):
         # Converting to seconds
         self.fights["last_round_time"] = self.fights["last_round_time"].apply(
