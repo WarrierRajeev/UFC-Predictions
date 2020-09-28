@@ -1,10 +1,17 @@
+import os
 from typing import Dict, List
 
+import pandas as pd
 from bs4 import BeautifulSoup
 
-from src.createdata.data_files_path import BASE_PATH
 from src.createdata.make_soup import make_soup
 from src.createdata.print_progress import print_progress
+from src.createdata.scrape_fight_links import UFCLinks
+
+from src.createdata.data_files_path import (  # isort:skip
+    NEW_EVENT_AND_FIGHTS,
+    TOTAL_EVENT_AND_FIGHTS,
+)
 
 
 HEADER: str = "R_fighter;B_fighter;R_KD;B_KD;R_SIG_STR.;B_SIG_STR.\
@@ -148,16 +155,49 @@ def get_total_fight_stats(event_and_fight_links: Dict[str, List[str]]) -> str:
     return total_stats
 
 
-def create_fight_data_csv(
-    event_and_fight_links: Dict[str, List[str]],
-    filename: str = "total_fight_data.csv",
-    header: str = HEADER,
-) -> None:
-
-    CSV_PATH = BASE_PATH / filename
+def scrape_raw_fight_data(
+    event_and_fight_links: Dict[str, List[str]], filepath, header: str = HEADER
+):
+    CSV_PATH = filepath
     if CSV_PATH.exists():
         print("file already exists. Overwriting!")
+
     total_stats = get_total_fight_stats(event_and_fight_links)
     with open(CSV_PATH.as_posix(), "wb") as file:
         file.write(bytes(header, encoding="ascii", errors="ignore"))
         file.write(bytes(total_stats, encoding="ascii", errors="ignore"))
+
+
+def create_fight_data_csv() -> None:
+    print("Scraping event and fight links!")
+
+    ufc_links = UFCLinks()
+    new_events_and_fight_links, all_events_and_fight_links = (
+        ufc_links.get_event_and_fight_links()
+    )
+    print("Successfully scraped and saved event and fight links!\n")
+    print("Scraping event and fight data!\n")
+
+    if not new_events_and_fight_links:
+        if TOTAL_EVENT_AND_FIGHTS.exists():
+            print("No new fight data to scrape at the moment!")
+            return
+        else:
+            scrape_raw_fight_data(
+                all_events_and_fight_links, filepath=TOTAL_EVENT_AND_FIGHTS
+            )
+    else:
+        scrape_raw_fight_data(new_events_and_fight_links, filepath=NEW_EVENT_AND_FIGHTS)
+
+        new_event_and_fights_data = pd.read_csv(NEW_EVENT_AND_FIGHTS)
+        old_event_and_fights_data = pd.read_csv(TOTAL_EVENT_AND_FIGHTS)
+
+        latest_total_fight_data = new_event_and_fights_data.append(
+            old_event_and_fights_data, ignore_index=True
+        )
+        latest_total_fight_data.to_csv(TOTAL_EVENT_AND_FIGHTS, index=None)
+
+        os.remove(NEW_EVENT_AND_FIGHTS)
+        print("Removed new event and fight files")
+
+    print("Successfully scraped and saved ufc fight data!\n")
