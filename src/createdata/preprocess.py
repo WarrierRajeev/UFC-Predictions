@@ -19,7 +19,11 @@ class Preprocessor:
         self.TOTAL_EVENT_AND_FIGHTS_PATH = TOTAL_EVENT_AND_FIGHTS
         self.PREPROCESSED_DATA_PATH = PREPROCESSED_DATA
         self.UFC_DATA_PATH = UFC_DATA
+        self.fights = None
+        self.fighter_details = None
+        self.store = None
 
+    def process_raw_data(self):
         print("Reading Files")
         self.fights, self.fighter_details = self._read_files()
 
@@ -44,7 +48,7 @@ class Preprocessor:
         print("Dropping Non Essential Columns")
         self._drop_non_essential_cols()
         self._save(filepath=self.PREPROCESSED_DATA_PATH)
-        print("Saved File")
+        print("Successfully preprocessed and saved ufc data!\n")
 
     def _read_files(self):
         try:
