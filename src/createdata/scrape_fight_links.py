@@ -14,9 +14,9 @@ class UFCLinks:
         self, all_events_url="http://ufcstats.com/statistics/events/completed?page=all"
     ):
         self.all_events_url = all_events_url
-        self.new_event_links, self.all_event_links = self._get_updated_event_links()
         self.PAST_EVENT_LINKS_PICKLE_PATH = PAST_EVENT_LINKS_PICKLE
         self.EVENT_AND_FIGHT_LINKS_PICKLE_PATH = EVENT_AND_FIGHT_LINKS_PICKLE
+        self.new_event_links, self.all_event_links = self._get_updated_event_links()
 
     def _get_updated_event_links(self) -> Tuple[List[str], List[str]]:
         all_event_links = []
