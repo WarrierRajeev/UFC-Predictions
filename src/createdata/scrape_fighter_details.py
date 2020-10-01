@@ -77,9 +77,14 @@ class FighterDetailsScraper:
                 past_event_links = pickle.load(pickle_in)
 
             # Find links of the newer fighters
-            new_fighter_links = list(
+            new_fighters = list(
                 set(all_fighter_links.keys()) - set(past_event_links.keys())
             )
+            new_fighter_links = {
+                name: link
+                for name, link in all_fighter_links.items()
+                if name in new_fighters
+            }
 
         # dump all_event_links as PAST_EVENT_LINKS
         with open(self.PAST_FIGHTER_LINKS_PICKLE_PATH.as_posix(), "wb") as f:
