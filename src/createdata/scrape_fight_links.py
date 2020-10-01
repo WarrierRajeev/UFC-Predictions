@@ -4,8 +4,8 @@ from typing import Dict, List, Tuple
 from src.createdata.make_soup import make_soup
 
 from src.createdata.data_files_path import (  # isort:skip
-    EVENT_AND_FIGHT_LINKS_PICKLE_PATH,
-    PAST_EVENT_LINKS_PICKLE_PATH,
+    EVENT_AND_FIGHT_LINKS_PICKLE,
+    PAST_EVENT_LINKS_PICKLE,
 )
 
 
@@ -15,6 +15,8 @@ class UFCLinks:
     ):
         self.all_events_url = all_events_url
         self.new_event_links, self.all_event_links = self._get_updated_event_links()
+        self.PAST_EVENT_LINKS_PICKLE_PATH = PAST_EVENT_LINKS_PICKLE
+        self.EVENT_AND_FIGHT_LINKS_PICKLE_PATH = EVENT_AND_FIGHT_LINKS_PICKLE
 
     def _get_updated_event_links(self) -> Tuple[List[str], List[str]]:
         all_event_links = []
@@ -25,22 +27,20 @@ class UFCLinks:
                 foo = href.get("href")
                 all_event_links.append(foo)
 
-        if not PAST_EVENT_LINKS_PICKLE_PATH.exists():
+        if not self.PAST_EVENT_LINKS_PICKLE_PATH.exists():
             # if no past event links are present, then there are no new event links
             new_event_links = []
         else:
             # get past event links
-            pickle_in = open(PAST_EVENT_LINKS_PICKLE_PATH.as_posix(), "rb")
-            past_event_links = pickle.load(pickle_in)
-            pickle_in.close()
+            with open(self.PAST_EVENT_LINKS_PICKLE_PATH.as_posix(), "rb") as pickle_in:
+                past_event_links = pickle.load(pickle_in)
 
             # Find links of the newer events
             new_event_links = list(set(all_event_links) - set(past_event_links))
 
         # dump all_event_links as PAST_EVENT_LINKS
-        pickle_out1 = open(PAST_EVENT_LINKS_PICKLE_PATH.as_posix(), "wb")
-        pickle.dump(all_event_links, pickle_out1)
-        pickle_out1.close()
+        with open(self.PAST_EVENT_LINKS_PICKLE_PATH.as_posix(), "wb") as f:
+            pickle.dump(all_event_links, f)
 
         return new_event_links, all_event_links
 
@@ -63,18 +63,19 @@ class UFCLinks:
             return event_and_fight_links
 
         new_events_and_fight_links = {}
-        if EVENT_AND_FIGHT_LINKS_PICKLE_PATH.exists():
+        if self.EVENT_AND_FIGHT_LINKS_PICKLE_PATH.exists():
             if not self.new_event_links:
-                pickle_in = open(EVENT_AND_FIGHT_LINKS_PICKLE_PATH.as_posix(), "rb")
-                all_events_and_fight_links = pickle.load(pickle_in)
-                pickle_in.close()
+                with open(
+                    self.EVENT_AND_FIGHT_LINKS_PICKLE_PATH.as_posix(), "rb"
+                ) as pickle_in:
+                    all_events_and_fight_links = pickle.load(pickle_in)
+
                 return new_events_and_fight_links, all_events_and_fight_links
             else:
                 new_events_and_fight_links = get_fight_links(self.new_event_links)
 
         all_events_and_fight_links = get_fight_links(self.all_event_links)
-        pickle_out = open(EVENT_AND_FIGHT_LINKS_PICKLE_PATH.as_posix(), "wb")
-        pickle.dump(all_events_and_fight_links, pickle_out)
-        pickle_out.close()
+        with open(self.EVENT_AND_FIGHT_LINKS_PICKLE_PATH.as_posix(), "wb") as f:
+            pickle.dump(all_events_and_fight_links, f)
 
         return new_events_and_fight_links, all_events_and_fight_links
