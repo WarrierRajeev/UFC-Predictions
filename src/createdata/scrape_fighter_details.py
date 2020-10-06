@@ -135,6 +135,13 @@ class FighterDetailsScraper:
         with open(self.SCRAPED_FIGHTER_DATA_DICT_PICKLE_PATH.as_posix(), "rb") as f:
             fighter_name_and_details = pickle.load(f)
 
+        fighters_with_no_data = []
+        for name, details in fighter_name_and_details.items():
+            if len(details) != len(self.HEADER):
+                fighters_with_no_data.append(name)
+
+        [fighter_name_and_details.pop(name) for name in fighters_with_no_data]
+
         df = (
             pd.DataFrame(fighter_name_and_details)
             .T.replace("--", value=np.NaN)
