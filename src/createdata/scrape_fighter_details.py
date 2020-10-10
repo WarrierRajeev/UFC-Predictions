@@ -122,6 +122,13 @@ class FighterDetailsScraper:
             fighter_name_and_details[fighter_name] = data
             print_progress(index + 1, l, prefix="Progress:", suffix="Complete")
 
+        fighters_with_no_data = []
+        for name, details in fighter_name_and_details.items():
+            if len(details) != len(self.HEADER):
+                fighters_with_no_data.append(name)
+
+        [fighter_name_and_details.pop(name) for name in fighters_with_no_data]
+
         # dump fighter_name_and_details as scraped_fighter_data_dict
         with open(self.SCRAPED_FIGHTER_DATA_DICT_PICKLE_PATH.as_posix(), "wb") as f:
             pickle.dump(fighter_name_and_details, f)
@@ -130,13 +137,6 @@ class FighterDetailsScraper:
 
         with open(self.SCRAPED_FIGHTER_DATA_DICT_PICKLE_PATH.as_posix(), "rb") as f:
             fighter_name_and_details = pickle.load(f)
-
-        fighters_with_no_data = []
-        for name, details in fighter_name_and_details.items():
-            if len(details) != len(self.HEADER):
-                fighters_with_no_data.append(name)
-
-        [fighter_name_and_details.pop(name) for name in fighters_with_no_data]
 
         df = (
             pd.DataFrame(fighter_name_and_details)
