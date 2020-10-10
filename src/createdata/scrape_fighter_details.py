@@ -20,13 +20,9 @@ class FighterDetailsScraper:
         self.FIGHTER_DETAILS_PATH = FIGHTER_DETAILS
         self.PAST_FIGHTER_LINKS_PICKLE_PATH = PAST_FIGHTER_LINKS_PICKLE
         self.SCRAPED_FIGHTER_DATA_DICT_PICKLE_PATH = SCRAPED_FIGHTER_DATA_DICT_PICKLE
-
-        print("Getting fighter urls \n")
-        self.fighter_group_urls = self._get_fighter_group_urls()
-        print("Getting fighter names and details \n")
-        self.new_fighter_links, self.all_fighter_links = (
-            self._get_updated_fighter_links()
-        )
+        self.fighter_group_urls: List[str] = []
+        self.new_fighter_links: Dict[str, List[str]] = {}
+        self.all_fighter_links: Dict[str, List[str]] = {}
 
     def _get_fighter_group_urls(self) -> List[str]:
         alphas = [chr(i) for i in range(ord("a"), ord("a") + 26)]
@@ -152,6 +148,13 @@ class FighterDetailsScraper:
         return df
 
     def create_fighter_data_csv(self) -> None:
+
+        print("Getting fighter urls \n")
+        self.fighter_group_urls = self._get_fighter_group_urls()
+        print("Getting fighter names and details \n")
+        self.new_fighter_links, self.all_fighter_links = (
+            self._get_updated_fighter_links()
+        )
 
         if not self.new_fighter_links:
             if self.FIGHTER_DETAILS_PATH.exists():
