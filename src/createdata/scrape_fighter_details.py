@@ -129,6 +129,9 @@ class FighterDetailsScraper:
 
         [fighter_name_and_details.pop(name) for name in fighters_with_no_data]
 
+        if not fighter_name_and_details:
+            exit("No new fighter data to scrape at the moment!")
+
         # dump fighter_name_and_details as scraped_fighter_data_dict
         with open(self.SCRAPED_FIGHTER_DATA_DICT_PICKLE_PATH.as_posix(), "wb") as f:
             pickle.dump(fighter_name_and_details, f)
