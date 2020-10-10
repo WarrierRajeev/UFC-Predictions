@@ -21,6 +21,7 @@ class FighterDetailsScraper:
         self.PAST_FIGHTER_LINKS_PICKLE_PATH = PAST_FIGHTER_LINKS_PICKLE
         self.SCRAPED_FIGHTER_DATA_DICT_PICKLE_PATH = SCRAPED_FIGHTER_DATA_DICT_PICKLE
         self.fighter_group_urls: List[str] = []
+        self.new_fighters_exists = False
         self.new_fighter_links: Dict[str, List[str]] = {}
         self.all_fighter_links: Dict[str, List[str]] = {}
 
@@ -129,6 +130,12 @@ class FighterDetailsScraper:
 
         [fighter_name_and_details.pop(name) for name in fighters_with_no_data]
 
+        if not fighter_name_and_details:
+            print("No new fighter data to scrape at the moment!")
+            return
+
+        self.new_fighters_exists = True
+
         # dump fighter_name_and_details as scraped_fighter_data_dict
         with open(self.SCRAPED_FIGHTER_DATA_DICT_PICKLE_PATH.as_posix(), "wb") as f:
             pickle.dump(fighter_name_and_details, f)
@@ -165,7 +172,10 @@ class FighterDetailsScraper:
                 fighter_details_df = self._fighter_details_to_df()
         else:
             self._get_fighter_name_and_details(self.new_fighter_links)
-            new_fighter_details_df = self._fighter_details_to_df()
+            if self.new_fighters_exists:
+                new_fighter_details_df = self._fighter_details_to_df()
+            else:
+                return
 
             old_fighter_details_df = pd.read_csv(self.FIGHTER_DETAILS_PATH)
 
