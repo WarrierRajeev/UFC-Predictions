@@ -35,12 +35,14 @@ class Preprocessor:
         self._convert_percentages_to_fractions()
         self._create_title_bout_feature()
         self._create_weight_classes()
+        print("Converting Times to Seconds")
         self._convert_to_seconds()
         self._get_total_time_fought()
         self.store = self._store_compiled_fighter_data_in_another_DF()
         self._create_winner_feature()
         self._create_fighter_attributes()
         self._create_fighter_age()
+        print('Saving to ' + str(self.UFC_DATA_PATH))
         self._save(filepath=self.UFC_DATA_PATH)
 
         print("Fill NaNs")
@@ -105,12 +107,40 @@ class Preprocessor:
     def _replacing_winner_nans_draw(self):
         self.fights["Winner"].fillna("Draw", inplace=True)
 
+    def _try_percentage_convert(self, str):
+        """
+        ufcstats.com will put a value of
+        ---
+        for percentage values that don't have a value.
+        TODO: is a zero lengh string the default we want?
+        """
+        try:
+            retval = float(str.replace("%", "")) / 100
+        except (ValueError):
+            retval = ""
+
+        return retval
+
+    def _try_seconds_convert(self, str):
+        """
+        ufcstats.com will put a value of
+        ---
+        for time values that don't have a value.
+        TODO: is a zero lengh string the default we want?
+        """
+        try:
+            retval = int(str.split(":")[0]) * 60 + int(str.split(":")[1])
+        except (ValueError):
+            retval = ""
+
+        return retval
+
     def _convert_percentages_to_fractions(self):
         pct_columns = ["R_SIG_STR_pct", "B_SIG_STR_pct", "R_TD_pct", "B_TD_pct"]
 
         for column in pct_columns:
             self.fights[column] = self.fights[column].apply(
-                lambda X: float(X.replace("%", "")) / 100
+                lambda X: self._try_percentage_convert(X)
             )
 
     def _create_title_bout_feature(self):
@@ -173,6 +203,12 @@ class Preprocessor:
         self.fights["last_round_time"] = self.fights["last_round_time"].apply(
             lambda X: int(X.split(":")[0]) * 60 + int(X.split(":")[1])
         )
+
+        pct_columns = ["R_CTRL", "B_CTRL"]
+        for column in pct_columns:
+            self.fights[column] = self.fights[column].apply(
+                lambda X: self._try_seconds_convert(X)
+            )
 
     def _get_total_time_fought(self):
         # '1 Rnd + 2OT (15-3-3)' and '1 Rnd + 2OT (24-3-3)' is not included because it has 3 uneven timed rounds.
@@ -241,8 +277,8 @@ class Preprocessor:
                 "B_TD_pct",
                 "R_SUB_ATT",
                 "B_SUB_ATT",
-                "R_PASS",
-                "B_PASS",
+                "R_CTRL",
+                "B_CTRL",
                 "R_REV",
                 "B_REV",
                 "win_by",

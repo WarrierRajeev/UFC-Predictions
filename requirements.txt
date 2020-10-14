@@ -13,3 +13,4 @@ sklearn
 xgboost==1.0.2
 search-google==1.2.1
 beautifulsoup4==4.9.0
+tqdm>=4.50.2
