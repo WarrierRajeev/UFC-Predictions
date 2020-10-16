@@ -67,8 +67,6 @@ class FighterDetailProcessor:
             "opp_TD_pct",
             "hero_SUB_ATT",
             "opp_SUB_ATT",
-            "hero_PASS",
-            "opp_PASS",
             "hero_REV",
             "opp_REV",
             "hero_SIG_STR._att",
@@ -107,6 +105,8 @@ class FighterDetailProcessor:
             "hero_GROUND_landed",
             "opp_GROUND_att",
             "opp_GROUND_landed",
+            "hero_CTRL_time(seconds)",
+            "opp_CTRL_time(seconds)",
             "total_time_fought(seconds)",
         ]
 
