@@ -35,7 +35,8 @@ class Preprocessor:
         self._convert_percentages_to_fractions()
         self._create_title_bout_feature()
         self._create_weight_classes()
-        self._convert_to_seconds()
+        self._convert_last_round_to_seconds()
+        self._convert_CTRL_to_seconds()
         self._get_total_time_fought()
         self.store = self._store_compiled_fighter_data_in_another_DF()
         self._create_winner_feature()
@@ -108,10 +109,16 @@ class Preprocessor:
     def _convert_percentages_to_fractions(self):
         pct_columns = ["R_SIG_STR_pct", "B_SIG_STR_pct", "R_TD_pct", "B_TD_pct"]
 
+        def pct_to_frac(X):
+            if X != "---":
+                return float(X.replace("%", "")) / 100
+            else:
+                # if '---' means it's taking pct of `0 of 0`.
+                # Taking a call here to consider 0 landed of 0 attempted as 0 percentage
+                return 0
+
         for column in pct_columns:
-            self.fights[column] = self.fights[column].apply(
-                lambda X: float(X.replace("%", "")) / 100
-            )
+            self.fights[column] = self.fights[column].apply(pct_to_frac)
 
     def _create_title_bout_feature(self):
         self.fights["title_bout"] = self.fights["Fight_type"].apply(
@@ -168,11 +175,31 @@ class Preprocessor:
             lambda weight: renamed_weight_classes[weight]
         )
 
-    def _convert_to_seconds(self):
+    def _convert_last_round_to_seconds(self):
         # Converting to seconds
         self.fights["last_round_time"] = self.fights["last_round_time"].apply(
             lambda X: int(X.split(":")[0]) * 60 + int(X.split(":")[1])
         )
+
+    def _convert_CTRL_to_seconds(self):
+        # Converting to seconds
+        CTRL_columns = ["R_CTRL", "B_CTRL"]
+
+        def conv_to_sec(X):
+            if X != "--":
+                return int(X.split(":")[0]) * 60 + int(X.split(":")[1])
+            else:
+                # if '--' means there was no time spent on the ground.
+                # Taking a call here to consider this as 0 seconds
+                return 0
+
+        for column in CTRL_columns:
+            self.fights[column + "_time(seconds)"] = self.fights[column].apply(
+                conv_to_sec
+            )
+
+        # drop original columns
+        self.fights.drop(["R_CTRL", "B_CTRL"], axis=1, inplace=True)
 
     def _get_total_time_fought(self):
         # '1 Rnd + 2OT (15-3-3)' and '1 Rnd + 2OT (24-3-3)' is not included because it has 3 uneven timed rounds.
