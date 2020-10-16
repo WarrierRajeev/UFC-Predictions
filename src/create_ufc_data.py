@@ -1,9 +1,10 @@
 from src.createdata.preprocess import Preprocessor
-from src.createdata.scrape_fight_data import create_fight_data_csv
+from src.createdata.scrape_fight_data import FightDataScraper
 from src.createdata.scrape_fighter_details import FighterDetailsScraper
 
 print("Creating fight data \n")
-create_fight_data_csv()  # Scrapes raw ufc fight data from website
+fight_data_scraper = FightDataScraper()
+fight_data_scraper.create_fight_data_csv()  # Scrapes raw ufc fight data from website
 
 print("Creating fighter data \n")
 fighter_details_scraper = FighterDetailsScraper()
