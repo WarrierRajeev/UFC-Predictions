@@ -3,17 +3,18 @@ import math
 import os
 import pickle
 
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
 import numpy as np
 import pandas as pd
 import plotly.graph_objs as go
 import requests
-import search_google.api
-from dash.dependencies import Input, Output, State
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
+
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+import search_google.api
+from dash.dependencies import Input, Output, State
 
 GOOGLE_API_DEVELOPER_KEY = "enter_key_here"
 CSE_ID = "enter_id_here"

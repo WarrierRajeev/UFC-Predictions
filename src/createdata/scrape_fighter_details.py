@@ -4,8 +4,7 @@ from typing import Dict, List
 import numpy as np
 import pandas as pd
 
-from src.createdata.make_soup import make_soup
-from src.createdata.print_progress import print_progress
+from src.createdata.utils import make_soup, print_progress
 
 from src.createdata.data_files_path import (  # isort:skip
     FIGHTER_DETAILS,

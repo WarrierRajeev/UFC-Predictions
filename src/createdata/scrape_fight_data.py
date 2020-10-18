@@ -4,9 +4,8 @@ from typing import Dict, List
 import pandas as pd
 from bs4 import BeautifulSoup
 
-from src.createdata.make_soup import make_soup
-from src.createdata.print_progress import print_progress
 from src.createdata.scrape_fight_links import UFCLinks
+from src.createdata.utils import make_soup, print_progress
 
 from src.createdata.data_files_path import (  # isort:skip
     NEW_EVENT_AND_FIGHTS,
