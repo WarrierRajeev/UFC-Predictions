@@ -2,6 +2,7 @@ import pickle
 from typing import Dict, List, Tuple
 
 from src.createdata.make_soup import make_soup
+from src.createdata.print_progress import print_progress
 
 from src.createdata.data_files_path import (  # isort:skip
     EVENT_AND_FIGHT_LINKS_PICKLE,
@@ -47,7 +48,12 @@ class UFCLinks:
     def get_event_and_fight_links(self) -> (Dict, Dict):
         def get_fight_links(event_links: List[str]) -> Dict[str, List[str]]:
             event_and_fight_links = {}
-            for link in event_links:
+
+            l = len(event_links)
+            print("Scraping event and fight links: ")
+            print_progress(0, l, prefix="Progress:", suffix="Complete")
+
+            for index, link in enumerate(event_links):
                 event_fights = []
                 soup = make_soup(link)
                 for row in soup.findAll(
@@ -59,6 +65,8 @@ class UFCLinks:
                     href = row.get("data-link")
                     event_fights.append(href)
                 event_and_fight_links[link] = event_fights
+
+                print_progress(index + 1, l, prefix="Progress:", suffix="Complete")
 
             return event_and_fight_links
 

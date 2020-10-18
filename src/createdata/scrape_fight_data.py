@@ -26,14 +26,14 @@ class FightDataScraper:
         self.TOTAL_EVENT_AND_FIGHTS_PATH = TOTAL_EVENT_AND_FIGHTS
 
     def create_fight_data_csv(self) -> None:
-        print("Scraping event and fight links!")
+        print("Scraping links!")
 
         ufc_links = UFCLinks()
         new_events_and_fight_links, all_events_and_fight_links = (
             ufc_links.get_event_and_fight_links()
         )
         print("Successfully scraped and saved event and fight links!\n")
-        print("Scraping event and fight data!\n")
+        print("Now, scraping event and fight data!\n")
 
         if not new_events_and_fight_links:
             if self.TOTAL_EVENT_AND_FIGHTS_PATH.exists():
