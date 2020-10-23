@@ -132,7 +132,7 @@ class FighterDetailsScraper:
                     .replace("Reach:", "")
                     .replace("STANCE:", "")
                     .replace("DOB:", "")
-                    .replace("SLpM", "")
+                    .replace("SLpM:", "")
                     .replace("Str. Acc.:", "")
                     .replace("SApM:", "")
                     .replace("Str. Def:", "")
