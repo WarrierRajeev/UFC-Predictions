@@ -22,13 +22,13 @@ class FighterDetailsScraper:
             "Stance",
             "DOB",
             "SLpM",
-            "Str. Acc.",
+            "Str_Acc",
             "SApM",
-            "Str. Def",
-            "TD Avg.",
-            "TD Acc.",
-            "TD Def.",
-            "Sub. Avg.",
+            "Str_Def",
+            "TD_Avg",
+            "TD_Acc",
+            "TD_Def",
+            "Sub_Avg",
         ]
         self.FIGHTER_DETAILS_PATH = FIGHTER_DETAILS
         self.PAST_FIGHTER_LINKS_PICKLE_PATH = PAST_FIGHTER_LINKS_PICKLE
