@@ -121,6 +121,9 @@ class FighterDetailsScraper:
             )
             data = []
             for i, div in enumerate(divs):
+                if i == 9:
+                    # An empty string is scraped here, let's not append that
+                    continue
                 data.append(
                     div.text.replace("  ", "")
                     .replace("\n", "")
@@ -138,9 +141,6 @@ class FighterDetailsScraper:
                     .replace("TD Def.:", "")
                     .replace("Sub. Avg.:", "")
                 )
-
-            # Remove empty strings from data
-            data = [e for e in data if e != ""]
 
             fighter_name_and_details[fighter_name] = data
             print_progress(index + 1, l, prefix="Progress:", suffix="Complete")
