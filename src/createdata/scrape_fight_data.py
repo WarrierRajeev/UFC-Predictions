@@ -114,10 +114,12 @@ class FightDataScraper:
                 for fight in fights:
                     futures.append(executor.submit(FightDataScraper._get_fight_stats_task, self=cls, fight=fight, event_info=event_info))
                 for future in concurrent.futures.as_completed(futures):
-                    if total_stats == "":
-                        total_stats = future.result()
-                    else:
-                        total_stats = total_stats + "\n" + future.result()
+                    fighter_stats = future.result()
+                    if fighter_stats != "":
+                        if total_stats == "":
+                            total_stats = fighter_stats
+                        else:
+                            total_stats = total_stats + "\n" + fighter_stats
                     print_progress(index + 1, l, prefix="Progress:", suffix="Complete")
 
         return total_stats
