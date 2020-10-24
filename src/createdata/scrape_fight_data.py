@@ -1,4 +1,6 @@
 import os
+import concurrent.futures
+import threading
 from typing import Dict, List
 
 import pandas as pd
@@ -11,7 +13,6 @@ from src.createdata.data_files_path import (  # isort:skip
     NEW_EVENT_AND_FIGHTS,
     TOTAL_EVENT_AND_FIGHTS,
 )
-
 
 class FightDataScraper:
     def __init__(self):
@@ -36,7 +37,7 @@ class FightDataScraper:
 
         if not new_events_and_fight_links:
             if self.TOTAL_EVENT_AND_FIGHTS_PATH.exists():
-                print("No new fight data to scrape at the moment!")
+                print(f'No new fight data to scrape at the moment, loaded existing data from {self.TOTAL_EVENT_AND_FIGHTS_PATH}.')
                 return
             else:
                 self._scrape_raw_fight_data(
@@ -65,35 +66,22 @@ class FightDataScraper:
         self, event_and_fight_links: Dict[str, List[str]], filepath
     ):
         if filepath.exists():
-            print("file already exists. Overwriting!")
+            print(f'File {filepath} already exists, overwriting.')
 
         total_stats = FightDataScraper._get_total_fight_stats(event_and_fight_links)
         with open(filepath.as_posix(), "wb") as file:
             file.write(bytes(self.HEADER, encoding="ascii", errors="ignore"))
             file.write(bytes(total_stats, encoding="ascii", errors="ignore"))
 
-    @classmethod
-    def _get_total_fight_stats(cls, event_and_fight_links: Dict[str, List[str]]) -> str:
-        total_stats = ""
-
-        l = len(event_and_fight_links)
-        print("Scraping all fight data: ")
-        print_progress(0, l, prefix="Progress:", suffix="Complete")
-
-        for index, (event, fights) in enumerate(event_and_fight_links.items()):
-            event_soup = make_soup(event)
-            event_info = FightDataScraper._get_event_info(event_soup)
-
-            for fight in fights:
-                try:
-                    fight_soup = make_soup(fight)
-                    fight_stats = FightDataScraper._get_fight_stats(fight_soup)
-                    fight_details = FightDataScraper._get_fight_details(fight_soup)
-                    result_data = FightDataScraper._get_fight_result_data(fight_soup)
-                except Exception as e:
-                    continue
-
-                total_fight_stats = (
+    def _get_fight_stats_task(self, fight, event_info):
+        #print(threading.get_native_id())
+        total_fight_stats = ""
+        try:
+            fight_soup = make_soup(fight)
+            fight_stats = FightDataScraper._get_fight_stats(fight_soup)
+            fight_details = FightDataScraper._get_fight_details(fight_soup)
+            result_data = FightDataScraper._get_fight_result_data(fight_soup)
+            total_fight_stats = (
                     fight_stats
                     + ";"
                     + fight_details
@@ -101,14 +89,36 @@ class FightDataScraper:
                     + event_info
                     + ";"
                     + result_data
-                )
+            )
+        except Exception as e:
+            pass
+            #print("Error getting fight stats, " + str(e))
 
-                if total_stats == "":
-                    total_stats = total_fight_stats
-                else:
-                    total_stats = total_stats + "\n" + total_fight_stats
+        return total_fight_stats
 
-            print_progress(index + 1, l, prefix="Progress:", suffix="Complete")
+    @classmethod
+    def _get_total_fight_stats(cls, event_and_fight_links: Dict[str, List[str]]) -> str:
+        total_stats = ""
+
+        l = len(event_and_fight_links)
+        print(f'Scraping data for {l} fights: ')
+        print_progress(0, l, prefix="Progress:", suffix="Complete")
+
+        for index, (event, fights) in enumerate(event_and_fight_links.items()):
+            event_soup = make_soup(event)
+            event_info = FightDataScraper._get_event_info(event_soup)
+
+            # Get data for each fight in the event in parallel.
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                futures = []
+                for fight in fights:
+                    futures.append(executor.submit(FightDataScraper._get_fight_stats_task, self=cls, fight=fight, event_info=event_info))
+                for future in concurrent.futures.as_completed(futures):
+                    if total_stats == "":
+                        total_stats = future.result()
+                    else:
+                        total_stats = total_stats + "\n" + future.result()
+                    print_progress(index + 1, l, prefix="Progress:", suffix="Complete")
 
         return total_stats
 
