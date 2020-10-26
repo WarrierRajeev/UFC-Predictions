@@ -109,7 +109,7 @@ class FightDataScraper:
             event_info = FightDataScraper._get_event_info(event_soup)
 
             # Get data for each fight in the event in parallel.
-            with concurrent.futures.ThreadPoolExecutor() as executor:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
                 futures = []
                 for fight in fights:
                     futures.append(executor.submit(FightDataScraper._get_fight_stats_task, self=cls, fight=fight, event_info=event_info))

@@ -142,7 +142,7 @@ class FighterDetailsScraper:
         print(f'Scraping data for {l} fighters: ')
 
         # Get fighter data in parallel.
-        with concurrent.futures.ThreadPoolExecutor() as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
             futures = []
             for index, (fighter_name, fighter_url) in enumerate(fighter_name_and_link.items()):
                 futures.append(executor.submit(FighterDetailsScraper._get_fighter_data_task, self=self,
