@@ -132,25 +132,32 @@ class FighterDetailProcessor:
 
             for i, index in enumerate(fighter.index):
 
-                fighter_slice = fighter[(i + 1) :]
-                s = fighter_slice[Numerical_columns].mean()
+                fighter_slice = fighter[(i + 1) :].sort_index(ascending=False)
+                s = (
+                    fighter_slice[Numerical_columns]
+                    .ewm(span=3, adjust=False)
+                    .mean()
+                    .tail(1)
+                )
+                if len(s) != 0:
+                    pass
+                else:
+                    s.loc[len(s)] = [np.NaN for _ in s.columns]
                 s["total_rounds_fought"] = fighter_slice["last_round"].sum()
                 s["total_title_bouts"] = fighter_slice[
                     fighter_slice["title_bout"] == True
                 ]["title_bout"].count()
                 s["hero_fighter"] = fighter_name
                 results = self._get_result_stats(list(fighter_slice["Winner"]))
-
                 for result_stat, result in zip(result_stats, results):
                     s[result_stat] = result
-
                 win_by_results = fighter_slice[fighter_slice["Winner"] == "hero"][
                     win_by_columns
                 ].sum()
                 for win_by_column, win_by_result in zip(win_by_columns, win_by_results):
                     s[win_by_column] = win_by_result
 
-                s.name = index
+                s.index = [index]
 
                 if fighter_index is None:
                     if index in fighter_blue.index:
