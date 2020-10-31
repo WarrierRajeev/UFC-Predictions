@@ -199,7 +199,9 @@ class FighterDetailsScraper:
             else:
                 return
 
-            old_fighter_details_df = pd.read_csv(self.FIGHTER_DETAILS_PATH)
+            old_fighter_details_df = pd.read_csv(
+                self.FIGHTER_DETAILS_PATH, index_col="fighter_name"
+            )
 
             fighter_details_df = new_fighter_details_df.append(
                 old_fighter_details_df, ignore_index=False
