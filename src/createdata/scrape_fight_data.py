@@ -51,6 +51,14 @@ class FightDataScraper:
             new_event_and_fights_data = pd.read_csv(self.NEW_EVENT_AND_FIGHTS_PATH)
             old_event_and_fights_data = pd.read_csv(self.TOTAL_EVENT_AND_FIGHTS_PATH)
 
+            assert len(new_event_and_fights_data.columns) == len(
+                old_event_and_fights_data.columns
+            )
+
+            new_event_and_fights_data = new_event_and_fights_data[
+                list(old_event_and_fights_data.columns)
+            ]
+
             latest_total_fight_data = new_event_and_fights_data.append(
                 old_event_and_fights_data, ignore_index=True
             )
