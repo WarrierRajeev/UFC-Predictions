@@ -27,6 +27,9 @@ class Preprocessor:
         print("Reading Files")
         self.fights, self.fighter_details = self._read_files()
 
+        print("Drop columns that contain information not yet occurred")
+        self._drop_future_fighter_details_columns()
+
         print("Renaming Columns")
         self._rename_columns()
         self._replacing_winner_nans_draw()
@@ -67,6 +70,21 @@ class Preprocessor:
             raise FileNotFoundError("Cannot find the data/fighter_details.csv")
 
         return fights_df, fighter_details_df
+
+    def _drop_future_fighter_details_columns(self):
+        self.fighter_details.drop(
+            columns=[
+                "SLpM",
+                "Str_Acc",
+                "SApM",
+                "Str_Def",
+                "TD_Avg",
+                "TD_Acc",
+                "TD_Def",
+                "Sub_Avg",
+            ],
+            inplace=True,
+        )
 
     def _rename_columns(self):
         columns = [
