@@ -5,7 +5,7 @@
 
 ![UFC app](https://github.com/WarrierRajeev/UFC-Predictions/blob/master/ufc-app.png)
 
-- Go to https://ufc-predictions.herokuapp.com/
+- Go to https://ufc-predictions.rajeevwarrier.com/
 - Select weight-class of the bout
 - Select Number of 5 minute rounds the fight is scheduled for
 - Select if the fight is a title fight or not
