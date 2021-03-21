@@ -100,11 +100,6 @@ Here are some column definitions:
 - `win_by_Submission` is the number of wins by submission in the fighter's ufc career
 - `win_by_TKO_Doctor_Stoppage` is the number of wins by doctor stoppage in the fighter's ufc career
 
-
-### Future Possibilities:
-
-- Try weighted moving average instead of simple mean to give more importance to stats of recent fights per fighter
-
 #### Acknowledgements
 
 - Inspiration: https://github.com/Hitkul/UFC_Fight_Prediction
