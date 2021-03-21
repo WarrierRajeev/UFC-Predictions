@@ -13,7 +13,6 @@ class FighterDetailProcessor:
         self.temp_red_frame, self.temp_blue_frame = self._calculate_fighter_data()
         self._convert_height_reach_to_cms()
         self._convert_weight_to_pounds()
-        self._convert_pct_to_frac()
         self.frame = self._merge_frames()
         self._rename_columns()
 
@@ -279,20 +278,6 @@ class FighterDetailProcessor:
             lambda X: float(X.replace(" lbs.", "")) if X is not np.NaN else X
         )
         self.fighter_details.drop(["Height", "Weight", "Reach"], axis=1, inplace=True)
-
-    def _convert_pct_to_frac(self):
-        pct_columns = ["Str_Acc", "Str_Def", "TD_Acc", "TD_Def"]
-
-        def pct_to_frac(X):
-            if X != np.NaN:
-                return float(X.replace("%", "")) / 100
-            else:
-                return 0
-
-        for column in pct_columns:
-            self.fighter_details[column] = self.fighter_details[column].apply(
-                pct_to_frac
-            )
 
     def _merge_frames(self):
 
