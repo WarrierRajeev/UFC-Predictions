@@ -7,7 +7,7 @@ dash-table-experimentS==0.6.0
 plotly==4.6.0
 gunicorn==20.0.4
 pandas==1.0.3
-numpy==1.18.3
+numpy==1.22.0
 jupyter==1.0.0
 sklearn
 xgboost==1.0.2
