@@ -160,13 +160,13 @@ class FighterDetailProcessor:
 
                 if fighter_index is None:
                     if index in fighter_blue.index:
-                        temp_blue_frame = temp_blue_frame.append(s)
+                        temp_blue_frame = pd.concat([temp_blue_frame, s], axis=0)
                     elif index in fighter_red.index:
-                        temp_red_frame = temp_red_frame.append(s)
+                        temp_red_frame = pd.concat([temp_red_frame, s], axis=0)
                 elif fighter_index == "blue":
-                    temp_blue_frame = temp_blue_frame.append(s)
+                    temp_blue_frame = pd.concat([temp_blue_frame, s], axis=0)
                 elif fighter_index == "red":
-                    temp_red_frame = temp_red_frame.append(s)
+                    temp_red_frame = pd.concat([temp_red_frame, s], axis=0)
 
         return temp_red_frame, temp_blue_frame
 
